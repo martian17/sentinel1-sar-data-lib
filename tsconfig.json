@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": ["esnext", "DOM"],
+    "module": "es2022",
+    "moduleResolution":"Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "lib",
+    "rootDir": "src",
+    "declaration": true,
+    "declarationMap": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "src/"
+  ],
+  "exclude": [
+    "src/*.macro.ts"
+  ]
+}
