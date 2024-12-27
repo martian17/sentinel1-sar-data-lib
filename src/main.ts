@@ -135,8 +135,10 @@ const decodePrimaryHeader = async function(buff: Buffer){
 class SecondaryHeader{
     static size = 62;
     constructor(
+        // Datation Service
         public coarseTime: number,
         public fineTime: number,
+        // Fixed Ancillary Data Service
         public syncMarker: number,
         public dataTakeID: number,
         public ECCNumber: number,
@@ -144,11 +146,15 @@ class SecondaryHeader{
         public testMode: number,
         public RXChannelID: number,
         public instrumentConfigurationID: number,
+        // Ancillary Data Service
         public dataWordIndex: number,
         public dataWord: number,
+        // Counter Service
         public spacePacketCount: number,
         public priCount: number,
-        public firstSpare3Bit: number,
+
+        public errorFlag: number,
+        public zerothSpare2Bit: number,
         public BAQMode: number,
         public BAQBlockLength: number,
         public spareByte: number,
@@ -162,6 +168,8 @@ class SecondaryHeader{
         public PRI: number,
         public SWST: number,
         public SWL: number,
+        // SAS SSB Message: this field varies with mode
+        // todo: implement mode switching
         public ssbFlag: number,
         public polarisation: number,
         public temperatureCompensation: number,
@@ -169,6 +177,7 @@ class SecondaryHeader{
         public elevationBeamAddress: number,
         public secondSpare2Bit: number,
         public beamAddress: number,
+        // SES SSB Message: this field also varies with mode
         public calMode: number,
         public secondSpareBit: number,
         public TXPulseNumber: number,
@@ -176,6 +185,7 @@ class SecondaryHeader{
         public thirdSpare3Bit: number,
         public swap: number,
         public swathNumber: number,
+        // 
         public numberOfQuads: number,
         public fillerOctet: number,
     ){}
@@ -198,7 +208,8 @@ const decodeSecondaryHeader = async function(b: Buffer){
         toU16(b[i++], b[i++]),                        // B2 dataWord
         toU32(b[i++], b[i++], b[i++], b[i++]),        // B4 spacePacketCount
         toU32(b[i++], b[i++], b[i++], b[i++]),        // B4 priCount
-        (N=b[i++],N>>>5)               &0b111,        // _3 firstSpare3Bit
+        (N=b[i++],N>>>7)               &0b1,          // _1 Error Flag
+        N>>>5                          &0b11,         // _2 zeroth Spare2Bit //_3 firstSpare3Bit
         N                              &0b11111,      // _5 BAQMode
         b[i++],                                       // B1 BAQBlockLength
         b[i++],                                       // B1 spareByte
